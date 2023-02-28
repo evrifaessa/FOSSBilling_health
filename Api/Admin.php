@@ -15,12 +15,12 @@
  */
 
 /**
- * Example module Admin API.
+ * Health module Admin API.
  *
  * API can be access only by admins
  */
 
-namespace Box\Mod\Example\Api;
+namespace Box\Mod\Health\Api;
 
 class Admin extends \Api_Abstract
 {

@@ -19,7 +19,7 @@
  * Always think about the information you are exposing.
  */
 
-namespace Box\Mod\Example\Api;
+namespace Box\Mod\Health\Api;
 
 class Client extends \Api_Abstract
 {
@@ -34,7 +34,7 @@ class Client extends \Api_Abstract
     public function get_info($data)
     {
         // call custom event hook. All active modules will be notified
-        $this->di['events_manager']->fire(['event' => 'onAfterClientCalledExampleModule', 'params' => ['key' => 'value']]);
+        $this->di['events_manager']->fire(['event' => 'onAfterClientCalledHealthModule', 'params' => ['key' => 'value']]);
 
         // Log message
         $this->di['logger']->info('Log message to log file');

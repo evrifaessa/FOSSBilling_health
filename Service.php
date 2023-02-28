@@ -21,7 +21,7 @@
  * still reserved.
  */
 
-namespace Box\Mod\Example;
+namespace Box\Mod\Health;
 
 class Service
 {
@@ -41,11 +41,11 @@ class Service
     {
         return array(
             'source' => array(
-                'path' => 'https://github.com/FOSSBilling/example', // An example external link
+                'path' => 'https://github.com/FOSSBilling/health', // An example external link
                 'label' => __trans('View source code'),
             ),
             'example' => array(
-                'path' => 'extension/settings/example', // An example internal link. Internal links are relative to the custom admin panel path.
+                'path' => 'extension/settings/health', // An example internal link. Internal links are relative to the custom admin panel path.
                 'label' => __trans('This is an example!'),
             ),
         );
@@ -144,7 +144,7 @@ class Service
     }
 
     /**
-     * Example event hook. Any module can hook to any FOSSBilling event and perform actions.
+     * Health event hook. Any module can hook to any FOSSBilling event and perform actions.
      *
      * Make sure extension is enabled before testing this event.
      *
@@ -188,7 +188,7 @@ class Service
         if (!$meta) {
             $meta = $di['db']->dispense('extension_meta');
             // $count->client_id = null; // client id is not known in this situation
-            $meta->extension = 'mod_example';
+            $meta->extension = 'mod_health';
             $meta->rel_type = 'ip';
             $meta->rel_id = $params['ip'];
             $meta->meta_key = 'counter';
@@ -214,7 +214,7 @@ class Service
     /**
      * This event hook is registered in example module client API call.
      */
-    public static function onAfterClientCalledExampleModule(\Box_Event $event)
+    public static function onAfterClientCalledHealthModule(\Box_Event $event)
     {
         // error_log('Called event from example module');
 
@@ -222,7 +222,7 @@ class Service
         $params = $event->getParameters();
 
         $meta = $di['db']->dispense('extension_meta');
-        $meta->extension = 'mod_example';
+        $meta->extension = 'mod_health';
         $meta->meta_key = 'event_params';
         $meta->meta_value = json_encode($params);
         $meta->created_at = date('Y-m-d H:i:s');
@@ -231,7 +231,7 @@ class Service
     }
 
     /**
-     * Example event hook for public ticket and set event return value.
+     * Health event hook for public ticket and set event return value.
      */
     public static function onBeforeGuestPublicTicketOpen(\Box_Event $event)
     {
@@ -247,7 +247,7 @@ class Service
     }
 
     /**
-     * Example email sending.
+     * Health email sending.
      */
     public static function onAfterClientOrderCreate(\Box_Event $event)
     {
@@ -260,7 +260,7 @@ class Service
 
          $email = array();
          $email['to_client'] = $params['client_id'];
-         $email['code']      = 'mod_example_email'; //@see modules/Example/html_email/mod_example_email.html.twig
+         $email['code']      = 'mod_health_email'; //@see modules/Health/html_email/mod_health_email.html.twig
 
          // these parameters are available in email template
          $email['order']     = $api->order_get(array('id'=>$params['id']));

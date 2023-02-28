@@ -22,9 +22,9 @@
  * This module can be called from API or in template
  */
 
-// Change "Example" with your module's name
+// Change "Health" with your module's name
 
-namespace Box\Mod\Example\Api;
+namespace Box\Mod\Health\Api;
 
 class Guest extends \Api_Abstract
 {
@@ -40,7 +40,7 @@ class Guest extends \Api_Abstract
         // Our example admin and client area pages will use this function to fetch the README data
         // Then, we'll tell Twig to parse and display the markdown output
 
-        $readme = $this->di['tools']->file_get_contents(PATH_MODS . '/Example/README.md');
+        $readme = $this->di['tools']->file_get_contents(PATH_MODS . '/Health/README.md');
 
         return $readme;
     }

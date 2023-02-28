@@ -19,7 +19,7 @@
  * Class does not extend any other class.
  */
 
-namespace Box\Mod\Example\Controller;
+namespace Box\Mod\Health\Controller;
 
 class Admin implements \Box\InjectionAwareInterface
 {
@@ -54,13 +54,13 @@ class Admin implements \Box\InjectionAwareInterface
             'group' => [
                 'index' => 1500,                // menu sort order
                 'location' => 'example',          // menu group identifier for subitems
-                'label' => __trans('Example module'),    // menu group title
+                'label' => __trans('Health module'),    // menu group title
                 'class' => 'example',           // used for css styling menu item
             ],
             'subpages' => [
                 [
                     'location' => 'example', // place this module in extensions group
-                    'label' => __trans('Example module submenu'),
+                    'label' => __trans('Health module submenu'),
                     'index' => 1500,
                     'uri' => $this->di['url']->adminLink('example'),
                     'class' => '',
@@ -74,15 +74,15 @@ class Admin implements \Box\InjectionAwareInterface
      * Always use your module prefix to avoid conflicts with other modules
      * in future.
      *
-     * @example $app->get('/example/test',      'get_test', null, get_class($this)); // calls get_test method on this class
-     * @example $app->get('/example/:id',        'get_index', array('id'=>'[0-9]+'), get_class($this));
+     * @example $app->get('/health/test',      'get_test', null, get_class($this)); // calls get_test method on this class
+     * @example $app->get('/health/:id',        'get_index', array('id'=>'[0-9]+'), get_class($this));
      */
     public function register(\Box_App &$app)
     {
-        $app->get('/example', 'get_index', [], static::class);
-        $app->get('/example/test', 'get_test', [], static::class);
-        $app->get('/example/user/:id', 'get_user', ['id' => '[0-9]+'], static::class);
-        $app->get('/example/api', 'get_api', [], static::class);
+        $app->get('/health', 'get_index', [], static::class);
+        $app->get('/health/test', 'get_test', [], static::class);
+        $app->get('/health/user/:id', 'get_user', ['id' => '[0-9]+'], static::class);
+        $app->get('/health/api', 'get_api', [], static::class);
     }
 
     public function get_index(\Box_App $app)
@@ -90,7 +90,7 @@ class Admin implements \Box\InjectionAwareInterface
         // always call this method to validate if admin is logged in
         $this->di['is_admin_logged'];
 
-        return $app->render('mod_example_index');
+        return $app->render('mod_health_index');
     }
 
     public function get_test(\Box_App $app)
@@ -101,7 +101,7 @@ class Admin implements \Box\InjectionAwareInterface
         $params = [];
         $params['youparamname'] = 'yourparamvalue';
 
-        return $app->render('mod_example_index', $params);
+        return $app->render('mod_health_index', $params);
     }
 
     public function get_user(\Box_App $app, $id)
@@ -112,7 +112,7 @@ class Admin implements \Box\InjectionAwareInterface
         $params = [];
         $params['userid'] = $id;
 
-        return $app->render('mod_example_index', $params);
+        return $app->render('mod_health_index', $params);
     }
 
     public function get_api(\Box_App $app, $id = null)
@@ -125,6 +125,6 @@ class Admin implements \Box\InjectionAwareInterface
         $params['api_example'] = true;
         $params['list_from_controller'] = $list_from_controller;
 
-        return $app->render('mod_example_index', $params);
+        return $app->render('mod_health_index', $params);
     }
 }

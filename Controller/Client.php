@@ -19,7 +19,7 @@
  * Class does not extend any other class.
  */
 
-namespace Box\Mod\Example\Controller;
+namespace Box\Mod\Health\Controller;
 
 class Client implements \Box\InjectionAwareInterface
 {
@@ -50,13 +50,13 @@ class Client implements \Box\InjectionAwareInterface
      */
     public function register(\Box_App &$app)
     {
-        $app->get('/example', 'get_index', [], static::class);
-        $app->get('/example/protected', 'get_protected', [], static::class);
+        $app->get('/health', 'get_index', [], static::class);
+        $app->get('/health/protected', 'get_protected', [], static::class);
     }
 
     public function get_index(\Box_App $app)
     {
-        return $app->render('mod_example_index');
+        return $app->render('mod_health_index');
     }
 
     public function get_protected(\Box_App $app)
@@ -64,6 +64,6 @@ class Client implements \Box\InjectionAwareInterface
         // call $this->di['is_client_logged'] method to validate if client is logged in
         $this->di['is_client_logged'];
 
-        return $app->render('mod_example_index', ['show_protected' => true]);
+        return $app->render('mod_health_index', ['show_protected' => true]);
     }
 }
