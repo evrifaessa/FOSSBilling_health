@@ -1,6 +1,6 @@
 {
     "id":           "health",
-	"type":         "mod",
+    "type":         "mod",
     "name":         "System Health",
     "description":  "Core module to monitor system health",
     "icon_url":     "icon.svg",
