@@ -6,17 +6,10 @@
  * @copyright FOSSBilling (https://www.fossbilling.org)
  * @license   Apache-2.0
  *
- * Copyright FOSSBilling 2022
- * This software may contain code previously used in the BoxBilling project.
- * Copyright BoxBilling, Inc 2011-2021
+ * Copyright FOSSBilling 2023
  *
  * This source file is subject to the Apache-2.0 License that is bundled
  * with this source code in the file LICENSE
- */
-
-/**
- * This file connects FOSSBilling admin area interface and API
- * Class does not extend any other class.
  */
 
 namespace Box\Mod\Health\Controller;
@@ -41,31 +34,18 @@ class Admin implements \Box\InjectionAwareInterface
         return $this->di;
     }
 
-    /**
-     * This method registers menu items in admin area navigation block
-     * This navigation is cached in data/cache/{hash}. To see changes please
-     * remove the file.
-     *
-     * @return array
-     */
     public function fetchNavigation()
     {
         return [
-            'group' => [
-                'index' => 1500,                // menu sort order
-                'location' => 'example',          // menu group identifier for subitems
-                'label' => __trans('Health module'),    // menu group title
-                'class' => 'example',           // used for css styling menu item
-            ],
             'subpages' => [
                 [
-                    'location' => 'example', // place this module in extensions group
-                    'label' => __trans('Health module submenu'),
-                    'index' => 1500,
-                    'uri' => $this->di['url']->adminLink('example'),
+                    'location' => 'system',
+                    'label' => __trans('System health'),
+                    'uri' => $this->di['url']->adminLink('health'),
+                    'index' => 120,
                     'class' => '',
                 ],
-            ],
+            ]
         ];
     }
 
@@ -87,7 +67,6 @@ class Admin implements \Box\InjectionAwareInterface
 
     public function get_index(\Box_App $app)
     {
-        // always call this method to validate if admin is logged in
         $this->di['is_admin_logged'];
 
         return $app->render('mod_health_index');
