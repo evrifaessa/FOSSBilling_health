@@ -14,7 +14,7 @@
 
 namespace Box\Mod\Health\Checks;
 
-class PHP_Version extends \Box\Health\Check
+class PHP_Version extends \Box_HealthCheck
 {
     public function check()
     {
@@ -33,5 +33,10 @@ class PHP_Version extends \Box\Health\Check
             'value' => $options['php']['version'],
             'recommended' => $options['php']['min_version'],
         );
+    }
+
+    public function getDocumentationLink()
+    {
+        return 'https://fossbilling.org/docs/php-version';
     }
 }
