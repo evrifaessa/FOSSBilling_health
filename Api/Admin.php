@@ -22,23 +22,29 @@ namespace Box\Mod\Health\Api;
 
 class Admin extends \Api_Abstract
 {
-    /**
-     * Return list of example objects.
-     *
-     * @return string[]
-     */
-    public function get_something($data)
+    public function list()
     {
-        $result = [
-            'apple',
-            'google',
-            'facebook',
-        ];
+        $checks = $this->getService()->getCheckList();
 
-        if (isset($data['microsoft'])) {
-            $result[] = 'microsoft';
-        }
+        return $checks;
+    }
 
-        return $result;
+    public function run_check($data)
+    {
+        $required = array(
+            'name' => 'You must provide a name for the check.',
+        );
+        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+
+        $check = $this->getService()->runCheck($data['name']);
+
+        return $check;
+    }
+
+    public function run_all_checks()
+    {
+        $checks = $this->getService()->runAllChecks();
+
+        return $checks;
     }
 }

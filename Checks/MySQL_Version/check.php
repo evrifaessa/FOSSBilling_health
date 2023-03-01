@@ -18,7 +18,7 @@ class MySQL_Version extends \FOSSBilling_HealthCheck
 {
     public function check()
     {
-        true // TODO: Actually implement this.
+        return true; // TODO: Actually implement this.
     }
 
     public function getDetails()
