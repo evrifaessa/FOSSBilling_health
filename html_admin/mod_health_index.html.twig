@@ -11,6 +11,92 @@
     </div>
     <!-- First card -->
     <div class="card-body">
+
+    <div class="row row-cards">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                        <span class="bg-green-lt avatar">
+                            <svg class="icon">
+                                <use xlink:href="#check" />
+                            </svg>
+                        </span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">PHP Version</div>
+                            <div class="text-muted">8.1.0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                        <span class="bg-green-lt avatar">
+                            <svg class="icon">
+                                <use xlink:href="#check" />
+                            </svg>
+                        </span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">MySQL Version</div>
+                            <div class="text-muted">8.0.0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                        <span class="bg-red-lt avatar">
+                            <svg class="icon">
+                                <use xlink:href="#close" />
+                            </svg>
+                        </span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Folder permissions</div>
+                            <div class="text-muted">Problems found</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                        <span class="bg-green-lt avatar">
+                            <svg class="icon">
+                                <use xlink:href="#check" />
+                            </svg>
+                        </span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">Web server</div>
+                            <div class="text-muted">Apache</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        </div>
+
         <p>{{ 'System Health'|trans }}</p>
         <ul>
             <li><a href="{{ 'example'|alink }}">Health module index</a></li>
@@ -58,13 +144,5 @@
             <pre>{{ dump(list) }}</pre>
         </div>
     {% endif %}
-
-    <!-- Second card -->
-	<div class="card-header">
-		<h5>{{ 'README'|trans }}</h5>
-    </div>
-    <div class="card-body markdown">
-        {{ guest.health_readme | markdown }}
-    </div>
 </div>
 {% endblock %}

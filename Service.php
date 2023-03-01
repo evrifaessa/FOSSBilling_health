@@ -56,8 +56,6 @@ class Service
         $checks = array();
 
         foreach ($dirs as $dir) {
-            error_log($dir);
-
             include_once $dir . '/check.php';
 
             $class = 'Box\\Mod\\Health\\Checks\\' . basename($dir);
