@@ -14,7 +14,7 @@
 
 namespace Box\Mod\Health\Checks;
 
-class MySQL_Version extends \Box_HealthCheck
+class MySQL_Version extends \FOSSBilling_HealthCheck
 {
     public function check()
     {

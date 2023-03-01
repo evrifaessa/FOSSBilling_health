@@ -14,7 +14,7 @@
 
 namespace Box\Mod\Health\Checks;
 
-class PHP_Version extends \Box_HealthCheck
+class PHP_Version extends \FOSSBilling_HealthCheck
 {
     public function check()
     {
