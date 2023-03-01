@@ -49,20 +49,10 @@ class Admin implements \Box\InjectionAwareInterface
         ];
     }
 
-    /**
-     * Methods maps admin areas urls to corresponding methods
-     * Always use your module prefix to avoid conflicts with other modules
-     * in future.
-     *
-     * @example $app->get('/health/test',      'get_test', null, get_class($this)); // calls get_test method on this class
-     * @example $app->get('/health/:id',        'get_index', array('id'=>'[0-9]+'), get_class($this));
-     */
     public function register(\Box_App &$app)
     {
         $app->get('/health', 'get_index', [], static::class);
-        $app->get('/health/test', 'get_test', [], static::class);
-        $app->get('/health/user/:id', 'get_user', ['id' => '[0-9]+'], static::class);
-        $app->get('/health/api', 'get_api', [], static::class);
+        $app->get('/health/check/:id', 'get_check', ['id' => '[A-Za-z0-9\_]+'], static::class);
     }
 
     public function get_index(\Box_App $app)
@@ -72,38 +62,13 @@ class Admin implements \Box\InjectionAwareInterface
         return $app->render('mod_health_index');
     }
 
-    public function get_test(\Box_App $app)
+    public function get_check(\Box_App $app, $id)
     {
-        // always call this method to validate if admin is logged in
         $this->di['is_admin_logged'];
 
         $params = [];
-        $params['youparamname'] = 'yourparamvalue';
+        $params['check_id'] = $id;
 
-        return $app->render('mod_health_index', $params);
-    }
-
-    public function get_user(\Box_App $app, $id)
-    {
-        // always call this method to validate if admin is logged in
-        $this->di['is_admin_logged'];
-
-        $params = [];
-        $params['userid'] = $id;
-
-        return $app->render('mod_health_index', $params);
-    }
-
-    public function get_api(\Box_App $app, $id = null)
-    {
-        // always call this method to validate if admin is logged in
-        $api = $this->di['api_admin'];
-        $list_from_controller = $api->example_get_something();
-
-        $params = [];
-        $params['api_example'] = true;
-        $params['list_from_controller'] = $list_from_controller;
-
-        return $app->render('mod_health_index', $params);
+        return $app->render('mod_health_check', $params);
     }
 }
