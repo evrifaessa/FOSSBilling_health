@@ -1,36 +1,26 @@
 <?php
-
 /**
- * FOSSBilling.
+ * Copyright 2023- FOSSBilling
+ * SPDX-License-Identifier: Apache-2.0.
  *
  * @copyright FOSSBilling (https://www.fossbilling.org)
- * @license   Apache-2.0
- *
- * Copyright FOSSBilling 2023
- *
- * This source file is subject to the Apache-2.0 License that is bundled
- * with this source code in the file LICENSE
- */
-
-/**
- * This file is a delegate for module. Class does not extend any other class.
- *
- * All methods provided in this example are optional, but function names are
- * still reserved.
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache-2.0
  */
 
 namespace Box\Mod\Health;
 
-class Service
-{
-    protected $di;
+use FOSSBilling\InjectionAwareInterface;
 
-    public function setDi(mixed $di)
+class Service implements InjectionAwareInterface
+{
+    protected ?\Pimple\Container $di = null;
+
+    public function setDi(\Pimple\Container $di): void
     {
         $this->di = $di;
     }
 
-    public function getDi()
+    public function getDi(): ?\Pimple\Container
     {
         return $this->di;
     }

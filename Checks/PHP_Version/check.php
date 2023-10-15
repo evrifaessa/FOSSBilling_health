@@ -1,30 +1,25 @@
 <?php
-
 /**
- * FOSSBilling.
+ * Copyright 2023- FOSSBilling
+ * SPDX-License-Identifier: Apache-2.0.
  *
  * @copyright FOSSBilling (https://www.fossbilling.org)
- * @license   Apache-2.0
- *
- * Copyright FOSSBilling 2023
- *
- * This source file is subject to the Apache-2.0 License that is bundled
- * with this source code in the file LICENSE
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache-2.0
  */
 
 namespace Box\Mod\Health\Checks;
 
-class PHP_Version extends \FOSSBilling_HealthCheck
+final class PHP_Version extends HealthCheck
 {
     public function check()
     {
-        $req = new Box_Requirements();
+        $req = new \FOSSBilling\Requirements();
         return $req->isPhpVersionOk();
     }
 
     public function getDetails()
     {
-        $req = new Box_Requirements();
+        $req = new \FOSSBilling\Requirements();
         $options = $req->getOptions();
 
         return array(
