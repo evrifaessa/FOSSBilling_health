@@ -19,7 +19,7 @@ final class PHP_Version extends HealthCheck
         if ($req->isPhpVersionOk()) {
             return [
                 'status' => HealthCheck::OK,
-                'short_desc' => 'You are using PHP ' . $options['php']['version'] . '.',
+                'short_desc' => 'You are using PHP ' . $options['php']['version'] . '. It\'s still receiving updates and will reach its EOL in 2 years.',
                 'long_desc' => 'You are using PHP ' . $options['php']['version'] . '. FOSSBilling only supports PHP versions over ' . $options['php']['min_version'] . '.'
             ];
         } else {

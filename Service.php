@@ -95,7 +95,7 @@ class Service implements InjectionAwareInterface
         if ($result) {
             return [
                 'result' => json_decode($result['result'], true),
-                'timestamp' => strtotime($result['timestamp'])     
+                'timestamp' => $result['timestamp']    
             ];
         }
 

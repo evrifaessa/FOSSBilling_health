@@ -1,140 +1,140 @@
-{% extends request.ajax ? "layout_blank.html.twig" : "layout_default.html.twig" %}
+{% extends "layout_default.html.twig" %}
 
-{% block meta_title %}{{ 'System health'|trans }}{% endblock %}
-
+{% block meta_title %}
+	{{ 'System health'|trans }}
+{% endblock %}
 {% block breadcrumbs %}{% endblock %}
-{% set active_menu = 'health' %}
-{% set checks = admin.health_list_checks %}
+
+{% set active_menu = 'system' %}
+
+{% set checks = admin.health_list_grouped_checks %}
+
+{% set unknown_checks = checks[0] %}
+{% set checks_needing_attention = checks[1] %}
+{% set warning_checks = checks[2] %}
+{% set successful_checks = checks[3] %}
 
 {% block content %}
-    <div class="row g-2 align-items-center">
-        <div class="col">
-            <h2 class="page-title">
-                {{ 'System health'|trans }}
-            </h2>
-        </div>
+	<div class="row g-2 align-items-center">
+		<div class="col">
+			<h2 class="page-title">
+				{{ 'System health'|trans }}
+			</h2>
+		</div>
 
-        <div class="col-auto ms-auto d-print-none">
-            <a href="{{ 'api/admin/health/run_checks'|link }}" class="btn btn-primary api-link" data-api-reload="1">
-                <svg class="icon">
-                    <use xlink:href="#refresh" />
-                </svg>
-                Re-run the checks
-            </a>
-            </div>
-        </div>
+		<div class="col-auto ms-auto d-print-none">
+			<a href="{{ 'api/admin/health/run_checks'|link }}" class="btn btn-primary api-link" data-api-reload="1">
+				<svg class="icon">
+					<use xlink:href="#refresh"/>
+				</svg>
+				Re-run the checks
+			</a>
+		</div>
+	</div>
 
-    <div class="page-body">
-    <ul class="nav nav-bordered mb-4">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Checks</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Latest runs</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Settings</a>
-              </li>
-            </ul>
-	<div class="row">
-        <div class="col-12 col-md-6 col-lg">
-            <h2 class="mb-3">Successful</h2>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg">
-            <h2 class="mb-3">Warnings</h2>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg">
-            <h2 class="mb-3">Needing attention</h2>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg">
-            <h2 class="mb-3">Unknown status</h2>
-        </div>
-    </div>
-    </div>
-
-    <div class="card">
-		<div class="card-header">
-			<h3 class="card-title">{{ 'System health'|trans }}</h3>
-            <div class="card-actions">
-                <a href="{{ 'api/admin/health/run_checks'|link }}" class="btn btn-primary api-link" data-api-reload="1">
-                    <svg class="icon">
-                        <use xlink:href="#refresh" />
-                    </svg>
-                    Re-run the checks
-                </a>
-            </div>
-        </div>
-
-		<!-- First card -->
-		<div class="card-body">
-
-			<div class="row row-cards">
-
-            {% for name, check in checks %}
-            
-            {% if check.latest.result.status == 1 %}
-                {# Needs attention #}
-                {% set background = "bg-danger-lt" %}
-                {% set icon = "close" %}
-            {% elseif check.latest.result.status == 2 %}
-                {# Warning #}
-                {% set background = "bg-warning-lt" %}
-                {% set icon = "alert-triangle" %}
-            {% elseif check.latest.result.status == 3 %}
-                {# Okay #}
-                {% set background = "bg-green-lt" %}
-                {% set icon = "check" %}
-            {% else %}
-                {# Unknown #}
-                {% set background = "bg-gray-lt" %}
-                {% set icon = "question-mark" %}
-            {% endif %}
-
-            <div class="col-md-6 col-xl-3">
+	<div class="page-body">
+		<ul class="nav nav-bordered mb-4">
+			<li class="nav-item">
+				<a class="nav-link active" aria-current="page" href="#">Checks</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#">Latest runs</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#">Settings</a>
+			</li>
+		</ul>
+		<div class="row">
+			<div class="col-12 col-md-6 col-lg">
+				<h2 class="mb-3">Successful</h2>
+				{% for name, check in successful_checks %}
 					<div class="card card-sm">
+						<div class="card-status-top bg-green"></div>
 						<div class="card-body">
-							<div class="row align-items-center">
-								<div class="col-auto">
-									<span class="{{ background }} avatar">
-										<svg class="icon">
-											<use xlink:href="#{{ icon }}"/>
-										</svg>
-									</span>
-								</div>
-								<div class="col">
-									<div class="font-weight-medium">{{ check.details.title }}</div>
-									<div class="text-muted">{{ check.latest.result.short_desc }}</div>
+							<h3 class="card-title">{{ check.details.title }}</h3>
+							{{ check.latest.result.short_desc }}
+							<div class="mt-4">
+								<div class="row">
+									<div class="col"></div>
+									<div class="col-auto">
+										<a href="#" class="link-muted">
+											<svg class="icon">
+												<use xlink:href="#clock"/>
+											</svg>
+											{{ check.latest.timestamp|timeago }}
+										</a>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
+				{% endfor %}
+			</div>
 
-            {% endfor %}
-
-				<div class="col-md-6 col-xl-3">
+			<div class="col-12 col-md-6 col-lg">
+				<h2 class="mb-3">Warnings</h2>
+				{% for name, check in warning_checks %}
 					<div class="card card-sm">
+						<div class="card-status-top bg-warning"></div>
 						<div class="card-body">
-							<div class="row align-items-center">
-								<div class="col-auto">
-									<span class="bg-red-lt avatar">
-										<svg class="icon">
-											<use xlink:href="#close"/>
-										</svg>
-									</span>
-								</div>
-								<div class="col">
-									<div class="font-weight-medium">Folder permissions</div>
-									<div class="text-muted">Problems found</div>
+							<h3 class="card-title">{{ check.details.title }}</h3>
+							{{ check.latest.result.short_desc }}
+							<div class="mt-4">
+								<div class="row">
+									<div class="col"></div>
+									<div class="col-auto">
+										<a href="#" class="link-muted">
+											<svg class="icon">
+												<use xlink:href="#clock"/>
+											</svg>
+											{{ check.latest.timestamp|timeago }}
+										</a>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
+				{% endfor %}
+			</div>
 
+			<div class="col-12 col-md-6 col-lg">
+				<h2 class="mb-3">Needing attention</h2>
+				{% for name, check in checks_needing_attention %}
+					<div class="card card-sm">
+						<div class="card-status-top bg-danger"></div>
+						<div class="card-body">
+							<h3 class="card-title">{{ check.details.title }}</h3>
+							{{ check.latest.result.short_desc }}
+							<div class="mt-4">
+								<div class="row">
+									<div class="col"></div>
+									<div class="col-auto">
+										<a href="#" class="link-muted">
+											<svg class="icon">
+												<use xlink:href="#clock"/>
+											</svg>
+											{{ check.latest.timestamp|timeago }}
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+
+			<div class="col-12 col-md-6 col-lg">
+				<h2 class="mb-3">Unknown status</h2>
+				{% for name, check in unknown_checks %}
+					<div class="card card-sm">
+						<div class="card-status-top bg-blue"></div>
+						<div class="card-body">
+							<h3 class="card-title">{{ check.details.title }}</h3>
+							This check hasn't been run yet.
+						</div>
+					</div>
+				{% endfor %}
 			</div>
 		</div>
-	{% endblock %}
+	</div>
+{% endblock %}
