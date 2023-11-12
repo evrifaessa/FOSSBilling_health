@@ -11,9 +11,9 @@ namespace Box\Mod\Health\Api;
 
 class Admin extends \Api_Abstract
 {
-    public function list()
+    public function list_checks()
     {
-        $checks = $this->getService()->getCheckList();
+        $checks = $this->getService()->getAvailableChecks();
 
         return $checks;
     }
@@ -25,14 +25,14 @@ class Admin extends \Api_Abstract
         );
         $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $check = $this->getService()->runCheck($data['name']);
+        $check = $this->getService()->runCheck($data['name'], true);
 
         return $check;
     }
 
-    public function run_all_checks()
+    public function run_checks()
     {
-        $checks = $this->getService()->runAllChecks();
+        $checks = $this->getService()->runChecks();
 
         return $checks;
     }

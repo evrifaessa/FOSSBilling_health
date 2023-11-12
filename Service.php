@@ -42,57 +42,13 @@ class Service implements InjectionAwareInterface
     }
 
     /**
-     * Runs health checks and adds the results to the database.
+     * Runs the checks that are due and adds the results to the database.
      */
     public function runChecks(): void
     {
-        $checksDirectory = __DIR__ . '/Checks';
-
-        $availableChecks = $this->getAvailableChecks($checksDirectory);
-
-        foreach ($availableChecks as $checkName) {
-            $frequency = $this->getCheckFrequency($checkName);
-
-            // Check if it's time to run the check based on its frequency
-            if ($frequency === 0 || $this->isCheckDue($checkName, $frequency)) {
-                $checkResult = $this->runCheck($checkName);
-
-                $this->addResultToDatabase($checkName, $checkResult);
-            }
+        foreach ($this->getAvailableChecks() as $checkName) {
+            $this->runCheck($checkName, false);
         }
-    }
-
-    /**
-     * Gets the frequency of a health check.
-     *
-     * @param string $checkName
-     *
-     * @return int
-     */
-    protected function getCheckFrequency(string $checkName): int
-    {
-        $checkClass = "\\Box\\Mod\\Health\\Checks\\{$checkName}";
-        $checkInstance = new $checkClass();
-
-        $details = $checkInstance->getDetails();
-
-        return isset($details['frequency']) ? (int)$details['frequency'] : 0;
-    }
-
-    /**
-     * Checks if it's time to run a health check based on its frequency.
-     *
-     * @param string $checkName
-     * @param int    $frequency
-     *
-     * @return bool
-     */
-    protected function isCheckDue(string $checkName, int $frequency): bool
-    {
-        $lastCheckTimestamp = $this->getLastCheckTimestamp($checkName);
-
-        // If the last check timestamp is not set or it's past the frequency interval, it's considered due
-        return (!$lastCheckTimestamp || (time() - $lastCheckTimestamp) >= $frequency);
     }
 
     /**
@@ -120,6 +76,42 @@ class Service implements InjectionAwareInterface
     }
 
     /**
+     * Gets a list of the available health checks
+     *
+     * @return array
+     */
+    public function getAvailableChecks(): array
+    {
+        $checks = [];
+        $directory = __DIR__ . '/Checks';
+
+        $files = scandir($directory);
+
+        foreach ($files as $file) {
+            if ($file !== '.' && $file !== '..' && is_dir($directory . '/' . $file)) {
+                $checks[] = $file;
+            }
+        }
+
+        return $checks;
+    }
+
+    /**
+     * Gets the details of a health check.
+     *
+     * @param string $checkName
+     *
+     * @return array
+     */
+    protected function getCheckDetails(string $checkName): array
+    {
+        $checkClass = "\\Box\\Mod\\Health\\Checks\\{$checkName}";
+        $checkInstance = new $checkClass();
+
+        return $checkInstance->getDetails();
+    }
+
+    /**
      * Gets the timestamp of the last run of a health check.
      *
      * @param string $checkName
@@ -134,18 +126,58 @@ class Service implements InjectionAwareInterface
     }
 
     /**
-     * Runs a health check and returns the result.
+     * Gets the frequency of a health check.
      *
      * @param string $checkName
      *
+     * @return int
+     */
+    protected function getCheckFrequency(string $checkName): int
+    {
+        $details = $this->getCheckDetails($checkName);
+
+        return isset($details['frequency']) ? (int)$details['frequency'] : 0;
+    }
+
+    /**
+     * Checks if it's time to run a health check based on its frequency.
+     *
+     * @param string $checkName
+     * @param int    $frequency
+     *
+     * @return bool
+     */
+    protected function isCheckDue(string $checkName, int $frequency): bool
+    {
+        $lastCheckTimestamp = $this->getLastCheckTimestamp($checkName);
+
+        // If the last check timestamp is not set or it's past the frequency interval, it's considered due
+        return (!$lastCheckTimestamp || (time() - $lastCheckTimestamp) >= $frequency);
+    }
+
+    /**
+     * Runs a health check and returns the result.
+     *
+     * @param string $checkName
+     * @param bool $forced Run the check forcefully. Even if it's not due yet.
+     * 
      * @return array
      */
-    protected function runCheck(string $checkName): array
+    public function runCheck(string $checkName, bool $forced): array
     {
         $checkClass = "\\Box\\Mod\\Health\\Checks\\{$checkName}";
         $checkInstance = new $checkClass();
 
-        return $checkInstance->check();
+        $frequency = $this->getCheckFrequency($checkName);
+
+        if ($frequency === 0 || $this->isCheckDue($checkName, $frequency) || $forced) {
+            $result = $checkInstance->check();
+            $this->addResultToDatabase($checkName, $result);
+
+            return $result;
+        }
+
+        return false;
     }
 
     /**
@@ -163,27 +195,5 @@ class Service implements InjectionAwareInterface
 
         $sql = 'INSERT INTO `health_checks` (`check_name`, `result`) VALUES (:check_name, :result)';
         $this->di['db']->exec($sql, $data);
-    }
-
-    /**
-     * Gets a list of available health checks in the specified directory.
-     *
-     * @param string $directory
-     *
-     * @return array
-     */
-    protected function getAvailableChecks(string $directory): array
-    {
-        $checks = [];
-
-        $files = scandir($directory);
-
-        foreach ($files as $file) {
-            if ($file !== '.' && $file !== '..' && is_dir($directory . '/' . $file)) {
-                $checks[] = $file;
-            }
-        }
-
-        return $checks;
     }
 }

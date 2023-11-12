@@ -11,5 +11,11 @@ namespace Box\Mod\Health\Checks;
 
 class HealthCheck
 {
-    
+
+}
+
+class Status {
+    const MEETS_NONE = 0;
+    const MEETS_REQUIRED = 1;       
+    const MEETS_RECOMMENDED = 2;
 }

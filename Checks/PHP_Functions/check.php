@@ -20,8 +20,9 @@ final class PHP_Functions extends HealthCheck
         $results = [];
         foreach ($unsafeFunctions as $function) {
             $results[$function] = [
-                'value' => function_exists($function) ? 'true' : 'false',
-                'required' => 'false',
+                'status' => function_exists($function) ? Status::MEETS_NONE : Status::MEETS_REQUIRED,
+                'value' => function_exists($function),
+                'required' => false,
             ];
         }
 
@@ -32,13 +33,14 @@ final class PHP_Functions extends HealthCheck
 
     public function getDetails()
     {
-        $req = new \FOSSBilling\Requirements();
-        $options = $req->getOptions();
-
         return array(
+            'enabled' => true,
             'title' => 'Unsafe PHP functions',
             'description' => 'Makes sure the unsafe PHP functions are disabled.',
             'frequency' => 0, // in seconds. leave 0 to check with every run.
+            'history' => [
+                'depth' => 0 // Store the results of the last N+1 checks. Useful for tests that measure performance or such, not really for simple checks like this one.
+            ]
         );
     }
 }

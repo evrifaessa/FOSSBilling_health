@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2023- FOSSBilling
  * SPDX-License-Identifier: Apache-2.0.
@@ -27,6 +26,7 @@ final class PHP_Version extends HealthCheck
                  * Please note that the value must be set. You also must set one or more of the "required" and "recommended" properties.
                  */
                 'php_version' => [
+                    'status' => $req->isPhpVersionOk() ? Status::MEETS_REQUIRED : Status::MEETS_NONE,
                     'value' => $options['php']['version'],
                     'required' => $options['php']['min_version']
                 ],
@@ -40,9 +40,13 @@ final class PHP_Version extends HealthCheck
         $options = $req->getOptions();
 
         return array(
+            'enabled' => true,
             'title' => 'PHP version',
             'description' => 'Makes sure your server is running the minimum required PHP version.',
-            'frequency' => 0 // in seconds. leave 0 to check with every run.
+            'frequency' => 0, // in seconds. leave 0 to check with every run.
+            'history' => [
+                'depth' => 0 // Store the results of the last N+1 checks. Useful for tests that measure performance or such, not really for simple checks like this one.
+            ]
         );
     }
 
