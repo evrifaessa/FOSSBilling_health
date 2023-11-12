@@ -2,11 +2,60 @@
 
 {% block meta_title %}{{ 'System health'|trans }}{% endblock %}
 
+{% block breadcrumbs %}{% endblock %}
 {% set active_menu = 'health' %}
 {% set checks = admin.health_list_checks %}
 
 {% block content %}
-	<div class="card">
+    <div class="row g-2 align-items-center">
+        <div class="col">
+            <h2 class="page-title">
+                {{ 'System health'|trans }}
+            </h2>
+        </div>
+
+        <div class="col-auto ms-auto d-print-none">
+            <a href="{{ 'api/admin/health/run_checks'|link }}" class="btn btn-primary api-link" data-api-reload="1">
+                <svg class="icon">
+                    <use xlink:href="#refresh" />
+                </svg>
+                Re-run the checks
+            </a>
+            </div>
+        </div>
+
+    <div class="page-body">
+    <ul class="nav nav-bordered mb-4">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Checks</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Latest runs</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Settings</a>
+              </li>
+            </ul>
+	<div class="row">
+        <div class="col-12 col-md-6 col-lg">
+            <h2 class="mb-3">Successful</h2>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg">
+            <h2 class="mb-3">Warnings</h2>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg">
+            <h2 class="mb-3">Needing attention</h2>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg">
+            <h2 class="mb-3">Unknown status</h2>
+        </div>
+    </div>
+    </div>
+
+    <div class="card">
 		<div class="card-header">
 			<h3 class="card-title">{{ 'System health'|trans }}</h3>
             <div class="card-actions">
@@ -18,27 +67,46 @@
                 </a>
             </div>
         </div>
+
 		<!-- First card -->
 		<div class="card-body">
 
 			<div class="row row-cards">
 
-            {% for check in checks %}
+            {% for name, check in checks %}
             
+            {% if check.latest.result.status == 1 %}
+                {# Needs attention #}
+                {% set background = "bg-danger-lt" %}
+                {% set icon = "close" %}
+            {% elseif check.latest.result.status == 2 %}
+                {# Warning #}
+                {% set background = "bg-warning-lt" %}
+                {% set icon = "alert-triangle" %}
+            {% elseif check.latest.result.status == 3 %}
+                {# Okay #}
+                {% set background = "bg-green-lt" %}
+                {% set icon = "check" %}
+            {% else %}
+                {# Unknown #}
+                {% set background = "bg-gray-lt" %}
+                {% set icon = "question-mark" %}
+            {% endif %}
+
             <div class="col-md-6 col-xl-3">
 					<div class="card card-sm">
 						<div class="card-body">
 							<div class="row align-items-center">
 								<div class="col-auto">
-									<span class="bg-green-lt avatar">
+									<span class="{{ background }} avatar">
 										<svg class="icon">
-											<use xlink:href="#check"/>
+											<use xlink:href="#{{ icon }}"/>
 										</svg>
 									</span>
 								</div>
 								<div class="col">
 									<div class="font-weight-medium">{{ check.details.title }}</div>
-									<div class="text-muted"></div>
+									<div class="text-muted">{{ check.latest.result.short_desc }}</div>
 								</div>
 							</div>
 						</div>

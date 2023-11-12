@@ -13,9 +13,28 @@ class Admin extends \Api_Abstract
 {
     public function list_checks()
     {
-        $checks = $this->getService()->getAvailableChecks();
+        $checks = $this->getService()->getChecks();
 
         return $checks;
+    }
+
+    public function list_grouped_checks()
+    {
+        $checks = $this->getService()->getGroupedChecks();
+
+        return $checks;
+    }
+
+    public function get_latest_check_result($data)
+    {
+        $required = array(
+            'name' => 'You must provide a name for the check.',
+        );
+        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+
+        $check = $this->getService()->getLatestCheckResult($data['name']);
+
+        return $check;
     }
 
     public function run_check($data)

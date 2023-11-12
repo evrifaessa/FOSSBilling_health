@@ -49,7 +49,7 @@ class Service implements InjectionAwareInterface
      */
     public function runChecks(): true
     {
-        foreach ($this->getAvailableChecks() as $checkName => $checkDetails) {
+        foreach ($this->getChecks() as $checkName => $checkDetails) {
             $this->runCheck($checkName, false);
         }
 
@@ -81,11 +81,33 @@ class Service implements InjectionAwareInterface
     }
 
     /**
-     * Gets a list of the available health checks
+     * Gets the latest check result for a health check.
+     *
+     * @param string $checkName
+     *
+     * @return array|null
+     */
+    public function getLatestCheckResult(string $checkName): ?array
+    {
+        $sql = 'SELECT `result`, `timestamp` FROM `health_checks` WHERE `check_name` = ? ORDER BY `timestamp` DESC LIMIT 1';
+        $result = $this->di['db']->getRow($sql, [$checkName]);
+
+        if ($result) {
+            return [
+                'result' => json_decode($result['result'], true),
+                'timestamp' => strtotime($result['timestamp'])     
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets a list of the health checks
      *
      * @return array
      */
-    public function getAvailableChecks(): array
+    public function getChecks(): array
     {
         $checks = [];
         $directory = __DIR__ . '/Checks';
@@ -96,12 +118,43 @@ class Service implements InjectionAwareInterface
             if ($checkName !== '.' && $checkName !== '..' && is_dir($directory . '/' . $checkName)) {
                 $checks[$checkName] = [
                     'details' => $this->getCheckDetails($checkName),
-                    'results' => $this->getCheckResults($checkName),
+                    'latest' => $this->getLatestCheckResult($checkName),
                 ];
             }
         }
 
         return $checks;
+    }
+
+    /**
+     * Gets a list of the health checks grouped by their status codes.
+     *
+     * The health checks are grouped into the following categories:
+     * - 0: Unknown/Haven't run yet
+     * - 1: Needs attention
+     * - 2: Warning
+     * - 3: Success
+     *
+     * @return array An associative array where keys are status codes and values are arrays of health checks.
+     */
+    public function getGroupedChecks(): array
+    {
+        $checks = $this->getChecks();
+        
+        $groupedChecks = [
+            0 => [], // Unknown/Haven't run yet
+            1 => [], // Needs attention
+            2 => [], // Warning
+            3 => [], // Success
+        ];
+
+        foreach ($checks as $check) {
+            $statusCode = $check['latest']['result']['status'] ?? 0;
+
+            $groupedChecks[$statusCode][] = $check;
+        }
+
+        return $groupedChecks;
     }
 
     /**
