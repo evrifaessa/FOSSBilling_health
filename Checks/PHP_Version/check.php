@@ -26,7 +26,6 @@ final class PHP_Version extends HealthCheck
                  * Please note that the value must be set. You also must set one or more of the "required" and "recommended" properties.
                  */
                 'php_version' => [
-                    'status' => $req->isPhpVersionOk() ? Status::MEETS_REQUIRED : Status::MEETS_NONE,
                     'value' => $options['php']['version'],
                     'required' => $options['php']['min_version']
                 ],

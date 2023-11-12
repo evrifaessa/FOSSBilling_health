@@ -20,7 +20,6 @@ final class PHP_Functions extends HealthCheck
         $results = [];
         foreach ($unsafeFunctions as $function) {
             $results[$function] = [
-                'status' => function_exists($function) ? Status::MEETS_NONE : Status::MEETS_REQUIRED,
                 'value' => function_exists($function),
                 'required' => false,
             ];
