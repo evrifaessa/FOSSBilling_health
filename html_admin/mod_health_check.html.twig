@@ -7,34 +7,5 @@
 {% set active_menu = 'system' %}
 
 {% block content %}
-<div class="card">
-	<div class="card-header">
-		<h5>{{ 'Health module settings'|trans }}</h5>
-    </div>
 
-    <div class="card-body">
-        <p>{{ 'Every extension can have settings page. Only requirement is to have mod_health_settings.html.twig page in html_admin folder'|trans }}</p>
-
-        {% set params = admin.extension_config_get({ "ext": "mod_health" }) %}
-
-        <form method="post" action="{{ 'api/admin/extension/config_save'|link }}" class="api-form" data-api-msg="{{ 'Configuration updated'|trans }}">
-            <input type="hidden" name="CSRFToken" value="{{ CSRFToken }}"/>
-            <div class="mb-3 row">
-                <label class="form-label col-3 col-form-label">{{ 'Parameter title'|trans }}:</label>
-                <div class="col">
-                    <input class="form-control" type="text" name="custom_param" value="{{ params.custom_param }}" placeholder="{{ 'Health custom value'|trans }}">
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label class="form-label col-3 col-form-label">{{ 'Public parameter title'|trans }}:</label>
-                <div class="col">
-                    <input class="form-control" type="text" name="public[param]" value="{{ params.public.param }}" placeholder="{{ 'This setting will be accessible by the Guest API'|trans }}">
-                </div>
-            </div>
-
-            <input type="submit" value="{{ 'Update'|trans }}" class="btn btn-primary">
-            <input type="hidden" name="ext" value="mod_health" />
-        </form>
-    </div>
-</div>
 {% endblock %}

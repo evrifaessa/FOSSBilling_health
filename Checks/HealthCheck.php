@@ -11,5 +11,7 @@ namespace Box\Mod\Health\Checks;
 
 class HealthCheck
 {
-    
+    const NEEDS_ATTENTION = 1;
+    const WARNING = 2;
+    const OK = 3;
 }

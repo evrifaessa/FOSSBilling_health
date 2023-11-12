@@ -11,46 +11,36 @@ namespace Box\Mod\Health\Checks;
 
 final class PHP_Version extends HealthCheck
 {
-    public function check()
+    public function check(): array
     {
         $req = new \FOSSBilling\Requirements();
         $options = $req->getOptions();
 
-        return [
-            'values' => [
-                /**
-                 * To the developers, you've got some options here:
-                 * - Checks that only have a "required" property will be "requirements". These will be displayed in red.
-                 * - Checks that only have a "recommended" property will be "warnings". These will be displayed in orange.
-                 * - Checks that have both of them will be evaluated to see which condition is/isn't met. For example, if the requirement is met but the recommendation isn't, it will be orange.
-                 * Please note that the value must be set. You also must set one or more of the "required" and "recommended" properties.
-                 */
-                'php_version' => [
-                    'value' => $options['php']['version'],
-                    'required' => $options['php']['min_version']
-                ],
-            ]
-        ];
+        if ($req->isPhpVersionOk()) {
+            return [
+                'status' => HealthCheck::OK,
+                'short_desc' => 'You are using PHP ' . $options['php']['version'] . '.',
+                'long_desc' => 'You are using PHP ' . $options['php']['version'] . '. FOSSBilling only supports PHP versions over ' . $options['php']['min_version'] . '.'
+            ];
+        } else {
+            return [
+                'status' => HealthCheck::NEEDS_ATTENTION,
+                'short_desc' => 'You are using an unsupported version of PHP.',
+                'long_desc' => 'You are using an unsupported version of PHP (' . $options['php']['version'] . '). FOSSBilling only supports PHP versions over ' . $options['php']['min_version'] . '.\nFor the security of you and your clients\' data, you must switch to a newer version of PHP as soon as possible.'
+            ];
+        }
     }
 
-    public function getDetails()
+    static function getDetails(): array
     {
-        $req = new \FOSSBilling\Requirements();
-        $options = $req->getOptions();
-
         return array(
             'enabled' => true,
             'title' => 'PHP version',
-            'description' => 'Makes sure your server is running the minimum required PHP version.',
             'frequency' => 0, // in seconds. leave 0 to check with every run.
+            'documentation' => 'https://fossbilling.org/docs/php-version',
             'history' => [
                 'depth' => 0 // Store the results of the last N+1 checks. Useful for tests that measure performance or such, not really for simple checks like this one.
             ]
         );
-    }
-
-    public function getDocumentationLink()
-    {
-        return 'https://fossbilling.org/docs/php-version';
     }
 }

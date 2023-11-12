@@ -43,12 +43,17 @@ class Service implements InjectionAwareInterface
 
     /**
      * Runs the checks that are due and adds the results to the database.
+     * 
+     * @return true
+     * @throws Exception
      */
-    public function runChecks(): void
+    public function runChecks(): true
     {
-        foreach ($this->getAvailableChecks() as $checkName) {
+        foreach ($this->getAvailableChecks() as $checkName => $checkDetails) {
             $this->runCheck($checkName, false);
         }
+
+        return true;
     }
 
     /**
@@ -87,9 +92,12 @@ class Service implements InjectionAwareInterface
 
         $files = scandir($directory);
 
-        foreach ($files as $file) {
-            if ($file !== '.' && $file !== '..' && is_dir($directory . '/' . $file)) {
-                $checks[] = $file;
+        foreach ($files as $checkName) {
+            if ($checkName !== '.' && $checkName !== '..' && is_dir($directory . '/' . $checkName)) {
+                $checks[$checkName] = [
+                    'details' => $this->getCheckDetails($checkName),
+                    'results' => $this->getCheckResults($checkName),
+                ];
             }
         }
 
@@ -103,12 +111,35 @@ class Service implements InjectionAwareInterface
      *
      * @return array
      */
-    protected function getCheckDetails(string $checkName): array
+    public function getCheckDetails(string $checkName): array
     {
         $checkClass = "\\Box\\Mod\\Health\\Checks\\{$checkName}";
         $checkInstance = new $checkClass();
 
         return $checkInstance->getDetails();
+    }
+
+    /**
+     * Gets the stored results of a health check.
+     *
+     * @param string $checkName
+     * @param int|null $limit
+     *
+     * @return array
+     */
+    public function getCheckResults(string $checkName, ?int $limit = null): array
+    {
+        $limitClause = ($limit !== null) ? 'LIMIT ' . $limit : '';
+
+        $sql = 'SELECT `id`, `result`, `timestamp` FROM `health_checks` WHERE `check_name` = ? ORDER BY `timestamp` DESC ' . $limitClause;
+        $results = $this->di['db']->getAll($sql, [$checkName]);
+
+        $formattedResults = [];
+        foreach ($results as $result) {
+            $formattedResults[] = json_decode($result['result'], true);
+        }
+
+        return $formattedResults;
     }
 
     /**
